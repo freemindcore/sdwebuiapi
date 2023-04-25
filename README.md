@@ -1,4 +1,4 @@
-# sdwebuiapi
+# easyai
 API client for AUTOMATIC1111/stable-diffusion-webui
 
 Supports txt2img, img2img, extra-single-image, extra-batch-images API calls.
@@ -14,28 +14,28 @@ API calls are (almost) direct translation from http://127.0.0.1:7860/docs as of 
 # Install
 
 ```
-pip install webuiapi
+pip install easyai
 ```
 
 # Usage
 
-webuiapi_demo.ipynb contains example code with original images. Images are compressed as jpeg in this document.
+easyai_demo.ipynb contains example code with original images. Images are compressed as jpeg in this document.
 
 ## create API client
 ```
-import webuiapi
+import easyai
 
 # create API client
-api = webuiapi.WebUIApi()
+api = easyai.EasyAPI()
 
 # create API client with custom host, port
-#api = webuiapi.WebUIApi(host='127.0.0.1', port=7860)
+#api = easyai.EasyAPI(host='127.0.0.1', port=7860)
 
 # create API client with custom host, port and https
-#api = webuiapi.WebUIApi(host='webui.example.com', port=443, use_https=True)
+#api = easyai.EasyAPI(host='webui.example.com', port=443, use_https=True)
 
 # create API client with default sampler, steps.
-#api = webuiapi.WebUIApi(sampler='Euler a', steps=20)
+#api = easyai.EasyAPI(sampler='Euler a', steps=20)
 
 # optionally set username, password when --api-auth is set on webui.
 api.set_auth('username', 'password')
@@ -52,7 +52,7 @@ result1 = api.txt2img(prompt="cute squirrel",
 #                      steps=30,
 #                      enable_hr=True,
 #                      hr_scale=2,
-#                      hr_upscaler=webuiapi.HiResUpscaler.Latent,
+#                      hr_upscaler=easyai.HiResUpscaler.Latent,
 #                      hr_second_pass_steps=20,
 #                      hr_resize_x=1536,
 #                      hr_resize_y=1024,
@@ -73,7 +73,6 @@ result1.parameters
 
 result1.image
 ```
-![txt2img](https://user-images.githubusercontent.com/1288793/200459205-258d75bb-d2b6-4882-ad22-040bfcf95626.jpg)
 
 
 ## img2img
@@ -81,7 +80,6 @@ result1.image
 result2 = api.img2img(images=[result1.image], prompt="cute cat", seed=5555, cfg_scale=6.5, denoising_strength=0.6)
 result2.image
 ```
-![img2img](https://user-images.githubusercontent.com/1288793/200459294-ab1127e5-04e5-47ac-82b2-2bbd0648402a.jpg)
 
 ## img2img inpainting
 ```
@@ -95,7 +93,6 @@ draw.ellipse((80,120,160,120+80), fill='white')
 
 mask
 ```
-![mask](https://user-images.githubusercontent.com/1288793/200459372-7850c6b6-27c5-435a-93e2-8710948d316a.jpg)
 
 ```
 inpainting_result = api.img2img(images=[result2.image],
@@ -107,32 +104,28 @@ inpainting_result = api.img2img(images=[result2.image],
                                 denoising_strength=0.7)
 inpainting_result.image
 ```
-![img2img_inpainting](https://user-images.githubusercontent.com/1288793/200459398-9c1004be-1352-4427-bc00-442721a0e5a1.jpg)
 
 ## extra-single-image
 ```
 result3 = api.extra_single_image(image=result2.image,
-                                 upscaler_1=webuiapi.Upscaler.ESRGAN_4x,
+                                 upscaler_1=easyai.Upscaler.ESRGAN_4x,
                                  upscaling_resize=1.5)
 print(result3.image.size)
 result3.image
 ```
 (768, 768)
 
-![extra_single_image](https://user-images.githubusercontent.com/1288793/200459455-8579d740-3d8f-47f9-8557-cc177b3e99b7.jpg)
 
 ## extra-batch-images
 ```
 result4 = api.extra_batch_images(images=[result1.image, inpainting_result.image],
-                                 upscaler_1=webuiapi.Upscaler.ESRGAN_4x,
+                                 upscaler_1=easyai.Upscaler.ESRGAN_4x,
                                  upscaling_resize=1.5)
 result4.images[0]
 ```
-![extra_batch_images_1](https://user-images.githubusercontent.com/1288793/200459540-b0bd2931-93db-4d03-9cc1-a9f5e5c89745.jpg)
 ```
 result4.images[1]
 ```
-![extra_batch_images_2](https://user-images.githubusercontent.com/1288793/200459542-aa8547a0-f6db-436b-bec1-031a93a7b1d4.jpg)
 
 ### Scripts support
 Scripts from AUTOMATIC1111's Web UI are supported, but there aren't official models that define a script's interface.
@@ -150,7 +143,7 @@ after 'p' is the list of accepted arguments
 ```
 List of accepted arguments:
 * _x_type_: Index of the axis for X axis. Indexes start from [0: Nothing]
-* _x_values_: String of comma-separated values for the X axis 
+* _x_values_: String of comma-separated values for the X axis
 * _y_type_: Index of the axis type for Y axis. As the X axis, indexes start from [0: Nothing]
 * _y_values_: String of comma-separated values for the Y axis
 * _z_type_: Index of the axis type for Z axis. As the X axis, indexes start from [0: Nothing]
@@ -212,7 +205,7 @@ XYZPlotAvailableImg2ImgScripts = [
 
 # Example call
 XAxisType = "Steps"
-XAxisValues = "20,30" 
+XAxisValues = "20,30"
 YAxisType = "Sampler"
 YAxisValues = "Euler a, LMS"
 ZAxisType = "Nothing"
@@ -246,7 +239,6 @@ result = api.txt2img(
 
 result.image
 ```
-![txt2img_grid_xyz](https://user-images.githubusercontent.com/1288793/222345625-dc2e4090-6786-4a53-8619-700dc2f12412.jpg)
 
 
 ### Configuration APIs
@@ -267,7 +259,7 @@ api.get_sd_models()
 
 # misc get apis
 api.get_samplers()
-api.get_cmd_flags()      
+api.get_cmd_flags()
 api.get_hypernetworks()
 api.get_face_restorers()
 api.get_realesrgan_models()
@@ -310,7 +302,7 @@ r.image
 ### Extension support - Model-Keyword
 ```
 # https://github.com/mix1009/model-keyword
-mki = webuiapi.ModelKeywordInterface(api)
+mki = easyai.ModelKeywordInterface(api)
 mki.get_keywords()
 ```
 ModelKeywordResult(keywords=['nousr robot'], model='robo-diffusion-v1.ckpt', oldhash='41fef4bd', match_source='model-keyword.txt')
@@ -327,7 +319,7 @@ r.image
 ### Extension support - ControlNet
 ```
 # https://github.com/Mikubill/sd-webui-controlnet
-cn = webuiapi.ControlNetInterface(api)
+cn = easyai.ControlNetInterface(api)
 cn.model_list()
 ```
 <pre>
@@ -350,11 +342,10 @@ r = api.txt2img(prompt="photo of a beautiful girl with blonde hair", height=512,
 img = r.image
 img
 ```
-![cn1](https://user-images.githubusercontent.com/1288793/222315754-43c6dc8c-2a62-4a31-b51a-f68523118e0d.png)
 
 ```
 # txt2img with ControlNet
-unit1 = webuiapi.ControlNetUnit(input_image=img, module='canny', model='control_canny-fp16 [e3fe7712]')
+unit1 = easyai.ControlNetUnit(input_image=img, module='canny', model='control_canny-fp16 [e3fe7712]')
 
 r = api.txt2img(prompt="photo of a beautiful girl", controlnet_units=[unit1])
 r.image
@@ -365,11 +356,11 @@ r.image
 
 ```
 # img2img with multiple ControlNets
-unit1 = webuiapi.ControlNetUnit(input_image=img, module='canny', model='control_canny-fp16 [e3fe7712]')
-unit2 = webuiapi.ControlNetUnit(input_image=img, module='depth', model='control_depth-fp16 [400750f6]', weight=0.5)
+unit1 = easyai.ControlNetUnit(input_image=img, module='canny', model='control_canny-fp16 [e3fe7712]')
+unit2 = easyai.ControlNetUnit(input_image=img, module='depth', model='control_depth-fp16 [400750f6]', weight=0.5)
 
 r2 = api.img2img(prompt="girl",
-            images=[img], 
+            images=[img],
             width=512,
             height=512,
             controlnet_units=[unit1, unit2],
@@ -378,17 +369,11 @@ r2 = api.img2img(prompt="girl",
            )
 r2.image
 ```
-![cn3](https://user-images.githubusercontent.com/1288793/222315816-1155b0c2-570d-4455-a68e-294fc7061b0a.png)
 
 ```
 r2.images[1]
 ```
-![cn4](https://user-images.githubusercontent.com/1288793/222315836-9a26afec-c407-426b-9a08-b2cef2a32ab1.png)
 
 ```
 r2.images[2]
 ```
-![cn5](https://user-images.githubusercontent.com/1288793/222315859-e6b6286e-854d-40c1-a516-5a08c827c49a.png)
-
-
-
