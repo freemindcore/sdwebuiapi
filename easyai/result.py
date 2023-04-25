@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 
 @dataclass
-class ApiResult:
+class APIResult:
     images: list
     parameters: dict
     info: dict

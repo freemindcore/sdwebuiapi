@@ -11,6 +11,7 @@ clean: ## Removing cached python compiled files
 	find . -name __pycache__  | xargs  rm -rfv
 
 install: ## Install dependencies
+	pip install flit
 	make clean
 	flit install --deps develop --symlink
 	pre-commit install
@@ -20,7 +21,7 @@ lint: ## Run code linters
 	black --check easyai tests
 	isort --check easyai tests
 	flake8
-	mypy easy
+	mypy easyai
 
 fmt format: ## Run code formatters
 	autoflake --in-place --remove-all-unused-imports --remove-unused-variables --ignore-init-module-imports  -r easyai
