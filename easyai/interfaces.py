@@ -2,11 +2,7 @@
 from dataclasses import dataclass
 from typing import Any, Dict
 
-from PIL import Image
-
 from .image import b64_img, raw_b64_img
-
-# https://github.com/mix1009/model-keyword
 
 
 @dataclass
@@ -18,6 +14,8 @@ class ModelKeywordResult:
 
 
 class ModelKeywordInterface:
+    """https://github.com/mix1009/model-keyword"""
+
     def __init__(self, easyai):
         self.api = easyai
 
@@ -30,10 +28,9 @@ class ModelKeywordInterface:
         return ModelKeywordResult(keywords, model, oldhash, match_source)
 
 
-# https://github.com/Klace/stable-diffusion-webui-instruct-pix2pix
-
-
 class InstructPix2PixInterface:
+    """https://github.com/Klace/stable-diffusion-webui-instruct-pix2pix"""
+
     def __init__(self, easyai):
         self.api = easyai
 
@@ -68,59 +65,6 @@ class InstructPix2PixInterface:
             "output_image_width": output_image_width,
         }
         return self.api.custom_post("instruct-pix2pix/img2img", payload=payload)
-
-
-# https://github.com/Mikubill/sd-webui-controlnet
-class ControlNetUnit:
-    def __init__(
-        self,
-        input_image: Image = None,
-        mask: Image = None,
-        module: str = "none",
-        model: str = "None",
-        weight: float = 1.0,
-        resize_mode: str = "Scale to Fit (Inner Fit)",
-        lowvram: bool = False,
-        processor_res: int = 64,
-        threshold_a: float = 64,
-        threshold_b: float = 64,
-        guidance: float = 1.0,
-        guidance_start: float = 0.0,
-        guidance_end: float = 1.0,
-        guessmode: bool = False,
-    ):
-        self.input_image = input_image
-        self.mask = mask
-        self.module = module
-        self.model = model
-        self.weight = weight
-        self.resize_mode = resize_mode
-        self.lowvram = lowvram
-        self.processor_res = processor_res
-        self.threshold_a = threshold_a
-        self.threshold_b = threshold_b
-        self.guidance = guidance
-        self.guidance_start = guidance_start
-        self.guidance_end = guidance_end
-        self.guessmode = guessmode
-
-    def to_dict(self):
-        return {
-            "input_image": raw_b64_img(self.input_image) if self.input_image else "",
-            "mask": raw_b64_img(self.mask) if self.mask else "",
-            "module": self.module,
-            "model": self.model,
-            "weight": self.weight,
-            "resize_mode": self.resize_mode,
-            "lowvram": self.lowvram,
-            "processor_res": self.processor_res,
-            "threshold_a": self.threshold_a,
-            "threshold_b": self.threshold_b,
-            "guidance": self.guidance,
-            "guidance_start": self.guidance_start,
-            "guidance_end": self.guidance_end,
-            "guessmode": self.guessmode,
-        }
 
 
 class ControlNetInterface:

@@ -1,8 +1,9 @@
 from typing import List
 
 from .base import WebUIAPIBase
-from .image import HiResUpscaler, b64_img
-from .interfaces import ControlNetUnit
+from .controlnet import ControlNetUnit
+from .image import b64_img
+from .upscaler import HiResUpscaler
 
 
 class EasyAPI(WebUIAPIBase):
@@ -112,6 +113,10 @@ class EasyAPI(WebUIAPIBase):
             payload["alwayson_scripts"]["ControlNet"] = {
                 "args": [x.to_dict() for x in controlnet_units]
             }
+
+        elif self.has_controlnet:
+            # workaround : if not passed, webui will use previous args!
+            payload["alwayson_scripts"]["ControlNet"] = {"args": []}
 
         response = self.session.post(url=f"{self.baseurl}/txt2img", json=payload)
         return self._to_api_result(response)
@@ -230,6 +235,9 @@ class EasyAPI(WebUIAPIBase):
             payload["alwayson_scripts"]["ControlNet"] = {
                 "args": [x.to_dict() for x in controlnet_units]
             }
+        elif self.has_controlnet:
+            payload["alwayson_scripts"]["ControlNet"] = {"args": []}
+
         response = self.session.post(url=f"{self.baseurl}/img2img", json=payload)
         return self._to_api_result(response)
 
