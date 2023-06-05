@@ -14,7 +14,7 @@ API calls are (almost) direct translation from http://127.0.0.1:7860/docs as of 
 # Install
 
 ```
-pip install easyai
+pip install easyai-sdwebui-api
 ```
 
 # Usage
