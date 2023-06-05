@@ -20,6 +20,8 @@ class WebUIAPIBase:
         sampler="Euler a",
         steps=20,
         use_https=False,
+        username=None,
+        password=None,
     ):
         if baseurl is None:
             if use_https:
@@ -33,7 +35,10 @@ class WebUIAPIBase:
 
         self.session = requests.Session()
 
-        self.check_controlnet()
+        if username and password:
+            self.set_auth(username, password)
+        else:
+            self.check_controlnet()
 
     def check_controlnet(self):
         try:
@@ -45,11 +50,60 @@ class WebUIAPIBase:
     def set_auth(self, username, password):
         self.session.auth = (username, password)
 
+    def post_and_get_api_result(self, url, json, use_async):
+        if use_async:
+            import asyncio
+
+            return asyncio.ensure_future(self.async_post(url=url, json=json))
+        else:
+            response = self.session.post(url=url, json=json)
+            return self._to_api_result(response)
+
+    async def async_post(self, url, json):
+        import aiohttp
+
+        async with aiohttp.ClientSession() as session:
+            auth = (
+                aiohttp.BasicAuth(self.session.auth[0], self.session.auth[1])
+                if self.session.auth
+                else None
+            )
+            async with session.post(url, json=json, auth=auth) as response:
+                return await self._to_api_result_async(response)
+
     def _to_api_result(self, response):
         if response.status_code != 200:
             raise RuntimeError(response.status_code, response.text)
 
         r = response.json()
+        images = []
+        if "images" in r.keys():
+            images = [Image.open(io.BytesIO(base64.b64decode(i))) for i in r["images"]]
+        elif "image" in r.keys():
+            images = [Image.open(io.BytesIO(base64.b64decode(r["image"])))]
+
+        info = ""
+        if "info" in r.keys():
+            try:
+                info = json.loads(r["info"])
+            except:  # NOQA
+                info = r["info"]
+        elif "html_info" in r.keys():
+            info = r["html_info"]
+        elif "caption" in r.keys():
+            info = r["caption"]
+
+        parameters = ""
+        if "parameters" in r.keys():
+            parameters = r["parameters"]
+
+        return APIResult(images, parameters, info)
+
+    async def _to_api_result_async(self, response):
+        if response.status != 200:
+            raise RuntimeError(response.status, await response.text)
+
+        r = await response.json()
         images = []
         if "images" in r.keys():
             images = [Image.open(io.BytesIO(base64.b64decode(i))) for i in r["images"]]
@@ -183,10 +237,15 @@ class WebUIAPIBase:
         response = self.session.get(url=url)
         return response.json()
 
-    def custom_post(self, endpoint, payload={}, baseurl=False):
+    def custom_post(self, endpoint, payload={}, baseurl=False, use_async=False):
         url = self.get_endpoint(endpoint, baseurl)
-        response = self.session.post(url=url, json=payload)
-        return self._to_api_result(response)
+        if use_async:
+            import asyncio
+
+            return asyncio.ensure_future(self.async_post(url=url, json=payload))
+        else:
+            response = self.session.post(url=url, json=payload)
+            return self._to_api_result(response)
 
     def controlnet_version(self):
         r = self.custom_get("controlnet/version")

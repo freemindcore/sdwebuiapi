@@ -5,20 +5,8 @@ from .interfaces import (
     InstructPix2PixInterface,
     ModelKeywordInterface,
 )
-from .main import EasyAPI
+from .main import EasyAI, EasyAPI, easyai
 from .upscaler import HiResUpscaler, Upscaler
-
-
-class EasyAI(EasyAPI):
-    def __init__(self):
-        super().__init__(
-            host="127.0.0.1",
-            port=80,
-            use_https=False,
-        )
-
-
-easyai = EasyAI()
 
 __version__ = "0.1.3"
 

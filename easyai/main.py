@@ -52,6 +52,7 @@ class EasyAPI(WebUIAPIBase):
         controlnet_units: List[ControlNetUnit] = [],
         sampler_index=None,  # deprecated: use sampler_name
         use_deprecated_controlnet=False,
+        use_async=False,
     ):
         if sampler_index is None:
             sampler_index = self.default_sampler
@@ -118,8 +119,9 @@ class EasyAPI(WebUIAPIBase):
             # workaround : if not passed, webui will use previous args!
             payload["alwayson_scripts"]["ControlNet"] = {"args": []}
 
-        response = self.session.post(url=f"{self.baseurl}/txt2img", json=payload)
-        return self._to_api_result(response)
+        return self.post_and_get_api_result(
+            f"{self.baseurl}/txt2img", payload, use_async
+        )
 
     def img2img(
         self,
@@ -169,6 +171,7 @@ class EasyAPI(WebUIAPIBase):
         alwayson_scripts={},
         controlnet_units: List[ControlNetUnit] = [],
         use_deprecated_controlnet=False,
+        use_async=False,
     ):
         if sampler_name is None:
             sampler_name = self.default_sampler
@@ -238,8 +241,9 @@ class EasyAPI(WebUIAPIBase):
         elif self.has_controlnet:
             payload["alwayson_scripts"]["ControlNet"] = {"args": []}
 
-        response = self.session.post(url=f"{self.baseurl}/img2img", json=payload)
-        return self._to_api_result(response)
+        return self.post_and_get_api_result(
+            f"{self.baseurl}/img2img", payload, use_async
+        )
 
     def extra_single_image(
         self,
@@ -257,6 +261,7 @@ class EasyAPI(WebUIAPIBase):
         upscaler_2="None",
         extras_upscaler_2_visibility=0,
         upscale_first=False,
+        use_async=False,
     ):
         payload = {
             "resize_mode": resize_mode,
@@ -275,10 +280,9 @@ class EasyAPI(WebUIAPIBase):
             "image": b64_img(image),
         }
 
-        response = self.session.post(
-            url=f"{self.baseurl}/extra-single-image", json=payload
+        return self.post_and_get_api_result(
+            f"{self.baseurl}/extra-single-image", payload, use_async
         )
-        return self._to_api_result(response)
 
     def extra_batch_images(
         self,
@@ -297,6 +301,7 @@ class EasyAPI(WebUIAPIBase):
         upscaler_2="None",
         extras_upscaler_2_visibility=0,
         upscale_first=False,
+        use_async=False,
     ):
         if name_list is not None:
             if len(name_list) != len(images):
@@ -326,7 +331,18 @@ class EasyAPI(WebUIAPIBase):
             "imageList": image_list,
         }
 
-        response = self.session.post(
-            url=f"{self.baseurl}/extra-batch-images", json=payload
+        return self.post_and_get_api_result(
+            f"{self.baseurl}/extra-batch-images", payload, use_async
         )
-        return self._to_api_result(response)
+
+
+class EasyAI(EasyAPI):
+    def __init__(self):
+        super().__init__(
+            host="127.0.0.1",
+            port=80,
+            use_https=False,
+        )
+
+
+easyai = EasyAI()
