@@ -39,6 +39,14 @@ api = easyai.EasyAPI()
 
 # optionally set username, password when --api-auth is set on webui.
 api.set_auth('username', 'password')
+
+# check controlnet version
+api.controlnet_version()
+
+# list all controlnet models
+# api.controlnet_module_list()
+# api.controlnet_model_list()
+
 ```
 
 ## txt2img
@@ -319,8 +327,12 @@ r.image
 ### Extension support - ControlNet
 ```
 # https://github.com/Mikubill/sd-webui-controlnet
-cn = easyai.ControlNetInterface(api)
-cn.model_list()
+# check controlnet version
+api.controlnet_version()
+
+# list all controlnet models
+# api.controlnet_module_list()
+# api.controlnet_model_list()
 ```
 <pre>
 ['control_canny-fp16 [e3fe7712]',
