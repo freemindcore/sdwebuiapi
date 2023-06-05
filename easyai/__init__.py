@@ -20,7 +20,7 @@ class EasyAI(EasyAPI):
 
 easyai = EasyAI()
 
-__version__ = "0.1.2"
+__version__ = "0.1.3rc1"
 
 __all__ = [
     "easyai",
