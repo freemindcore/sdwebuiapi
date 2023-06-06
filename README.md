@@ -1,7 +1,11 @@
-# easyai
+# easyai-sdwebui-api
 API client for AUTOMATIC1111/stable-diffusion-webui
 
+
 Supports txt2img, img2img, extra-single-image, extra-batch-images API calls.
+
+Tested on AUTOMATIC1111/stable-diffusion-webui v1.2.1 and Mikubill/sd-webui-controlnet v1.1.189
+
 
 API support have to be enabled from webui. Add --api when running webui.
 It's explained [here](https://github.com/AUTOMATIC1111/stable-diffusion-webui/wiki/API).
@@ -133,6 +137,16 @@ result4.images[0]
 ```
 ```
 result4.images[1]
+```
+
+### Async API support
+txt2img, img2img, extra_single_image, extra_batch_images support async api call with use_async=True parameter. You need asyncio, aiohttp packages installed.
+```
+result = await api.txt2img(prompt="cute kitten",
+                    seed=1001,
+                    use_async=True
+                    )
+result.image
 ```
 
 ### Scripts support
@@ -272,9 +286,17 @@ api.get_hypernetworks()
 api.get_face_restorers()
 api.get_realesrgan_models()
 api.get_prompt_styles()
-api.get_artist_categories()
-api.get_artists()
+api.get_artist_categories() # deprecated ?
+api.get_artists() # deprecated ?
 api.get_progress()
+api.get_embeddings()
+api.get_cmd_flags()
+api.get_scripts()
+api.get_memory()
+
+# misc apis
+api.interrupt()
+api.skip()
 ```
 
 ### Utility methods
@@ -335,18 +357,26 @@ api.controlnet_version()
 # api.controlnet_model_list()
 ```
 <pre>
-['control_canny-fp16 [e3fe7712]',
- 'control_depth-fp16 [400750f6]',
- 'control_hed-fp16 [13fee50b]',
- 'control_mlsd-fp16 [e3705cfa]',
- 'control_normal-fp16 [63f96f7c]',
- 'control_openpose-fp16 [9ca67cc5]',
- 'control_scribble-fp16 [c508311e]',
- 'control_seg-fp16 [b9c1cc12]']
+['control_v11e_sd15_ip2p [c4bb465c]',
+ 'control_v11e_sd15_shuffle [526bfdae]',
+ 'control_v11f1p_sd15_depth [cfd03158]',
+ 'control_v11p_sd15_canny [d14c016b]',
+ 'control_v11p_sd15_inpaint [ebff9138]',
+ 'control_v11p_sd15_lineart [43d4be0d]',
+ 'control_v11p_sd15_mlsd [aca30ff0]',
+ 'control_v11p_sd15_normalbae [316696f1]',
+ 'control_v11p_sd15_openpose [cab727d4]',
+ 'control_v11p_sd15_scribble [d4ba51ff]',
+ 'control_v11p_sd15_seg [e1f51eb9]',
+ 'control_v11p_sd15_softedge [a8575a2a]',
+ 'control_v11p_sd15s2_lineart_anime [3825e83e]',
+ 'control_v11u_sd15_tile [1f041471]']
  </pre>
 
-**Use of ControlNetInterface txt2img/img2img is deprecated.** Please use the txt2img and img2img api with controlnet_units parameter.
-
+```
+api.controlnet_version()
+api.controlnet_module_list()
+```
 
 ```
 # normal txt2img
@@ -362,8 +392,6 @@ unit1 = easyai.ControlNetUnit(input_image=img, module='canny', model='control_ca
 r = api.txt2img(prompt="photo of a beautiful girl", controlnet_units=[unit1])
 r.image
 ```
-
-![cn2](https://user-images.githubusercontent.com/1288793/222315791-c6c480eb-2987-4044-b673-5f2cb6135f87.png)
 
 
 ```
