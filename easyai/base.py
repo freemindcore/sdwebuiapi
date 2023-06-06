@@ -71,61 +71,46 @@ class WebUIAPIBase:
             async with session.post(url, json=json, auth=auth) as response:
                 return await self._to_api_result_async(response)
 
+    def _extract_result(self, json_result):
+        images = []
+        if "images" in json_result.keys():
+            images = [
+                Image.open(io.BytesIO(base64.b64decode(i)))
+                for i in json_result["images"]
+            ]
+        elif "image" in json_result.keys():
+            images = [Image.open(io.BytesIO(base64.b64decode(json_result["image"])))]
+
+        info = ""
+        if "info" in json_result.keys():
+            try:
+                info = json.loads(json_result["info"])
+            except:  # NOQA
+                info = json_result["info"]
+        elif "html_info" in json_result.keys():
+            info = json_result["html_info"]
+        elif "caption" in json_result.keys():
+            info = json_result["caption"]
+
+        parameters = ""
+        if "parameters" in json_result.keys():
+            parameters = json_result["parameters"]
+
+        return APIResult(images, parameters, info)
+
     def _to_api_result(self, response):
         if response.status_code != 200:
             raise RuntimeError(response.status_code, response.text)
 
         r = response.json()
-        images = []
-        if "images" in r.keys():
-            images = [Image.open(io.BytesIO(base64.b64decode(i))) for i in r["images"]]
-        elif "image" in r.keys():
-            images = [Image.open(io.BytesIO(base64.b64decode(r["image"])))]
-
-        info = ""
-        if "info" in r.keys():
-            try:
-                info = json.loads(r["info"])
-            except:  # NOQA
-                info = r["info"]
-        elif "html_info" in r.keys():
-            info = r["html_info"]
-        elif "caption" in r.keys():
-            info = r["caption"]
-
-        parameters = ""
-        if "parameters" in r.keys():
-            parameters = r["parameters"]
-
-        return APIResult(images, parameters, info)
+        return self._extract_result(r)
 
     async def _to_api_result_async(self, response):
         if response.status != 200:
             raise RuntimeError(response.status, await response.text)
 
         r = await response.json()
-        images = []
-        if "images" in r.keys():
-            images = [Image.open(io.BytesIO(base64.b64decode(i))) for i in r["images"]]
-        elif "image" in r.keys():
-            images = [Image.open(io.BytesIO(base64.b64decode(r["image"])))]
-
-        info = ""
-        if "info" in r.keys():
-            try:
-                info = json.loads(r["info"])
-            except:  # NOQA
-                info = r["info"]
-        elif "html_info" in r.keys():
-            info = r["html_info"]
-        elif "caption" in r.keys():
-            info = r["caption"]
-
-        parameters = ""
-        if "parameters" in r.keys():
-            parameters = r["parameters"]
-
-        return APIResult(images, parameters, info)
+        return self._extract_result(r)
 
     # XXX 500 error (2022/12/26)
     def png_info(self, image):
