@@ -1,19 +1,17 @@
 # easyai-sdwebui-api
 API client for AUTOMATIC1111/stable-diffusion-webui
 
-
-Supports txt2img, img2img, extra-single-image, extra-batch-images API calls.
-
 Tested on AUTOMATIC1111/stable-diffusion-webui v1.2.1 and Mikubill/sd-webui-controlnet v1.1.189
 
+* Supports txt2img, img2img, extra-single-image, extra-batch-images API calls.
 
-API support have to be enabled from webui. Add --api when running webui.
+* API support have to be enabled from webui. Add --api when running webui.
 It's explained [here](https://github.com/AUTOMATIC1111/stable-diffusion-webui/wiki/API).
 
-You can use --api-auth user1:pass1,user2:pass2 option to enable authentication for api access.
+* You can use --api-auth user1:pass1,user2:pass2 option to enable authentication for api access.
 (Since it's basic http authentication the password is transmitted in cleartext)
 
-API calls are (almost) direct translation from http://127.0.0.1:7860/docs as of 2022/11/21.
+* API calls are (almost) direct translation from http://127.0.0.1:7860/docs as of 2022/11/21.
 
 # Install
 
