@@ -100,14 +100,14 @@ class WebUIAPIBase:
 
     def _to_api_result(self, response):
         if response.status_code != 200:
-            raise RuntimeError(response.status_code, response.text)
+            raise RuntimeError(response.status_code, response.text())
 
         r = response.json()
         return self._extract_result(r)
 
     async def _to_api_result_async(self, response):
         if response.status != 200:
-            raise RuntimeError(response.status, await response.text)
+            raise RuntimeError(response.status, await response.text())
 
         r = await response.json()
         return self._extract_result(r)
