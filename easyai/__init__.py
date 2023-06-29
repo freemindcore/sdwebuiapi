@@ -8,7 +8,7 @@ from .interfaces import (
 from .main import EasyAI, EasyAPI, easyai
 from .upscaler import HiResUpscaler, Upscaler
 
-__version__ = "0.1.4rc3"
+__version__ = "0.1.4"
 
 __all__ = [
     "easyai",
