@@ -1,7 +1,7 @@
 # easyai-sdwebui-api
 API client for AUTOMATIC1111/stable-diffusion-webui
 
-Tested on AUTOMATIC1111/stable-diffusion-webui v1.2.1 and Mikubill/sd-webui-controlnet v1.1.189
+Tested on AUTOMATIC1111/stable-diffusion-webui v1.2.x/v1.4.x and Mikubill/sd-webui-controlnet v1.1.232
 
 * Supports txt2img, img2img, extra-single-image, extra-batch-images API calls.
 
