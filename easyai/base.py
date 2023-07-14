@@ -99,8 +99,8 @@ class WebUIAPIBase:
         return APIResult(images, parameters, info)
 
     def _to_api_result(self, response):
-        if response.status_code != 200:
-            raise RuntimeError(response.status_code, response.text())
+        if response.status != 200:
+            raise RuntimeError(response.status, response.text())
 
         r = response.json()
         return self._extract_result(r)
